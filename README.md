@@ -2,6 +2,17 @@
 
 補助金・助成金の候補を事業者プロフィールに合わせて整理し、期限や公募見込みを通知する Next.js アプリです。jGrants の公開API、制度マスタ、予算動向、例年スケジュールを組み合わせて提案を作ります。
 
+> **運用状況（2026年10月）** — GitHub Actions の日次パイプライン（daily-pipeline・research-catalog）は、2026年7月から止めています。
+
+## English summary
+
+grant-finder is a Next.js + Supabase app (June 2026) that matches Japanese SME grants and subsidies to a business profile and emails deadline and upcoming-call notices. It combines Japan's public jGrants API with a curated program catalog, budget signals and yearly schedules.
+
+- New sign-ups stay in `pending_review` until an admin approves them. Access control relies on Supabase Row Level Security.
+- `pnpm test` runs 145 unit tests (Vitest). CI runs lint, type checks, tests, a format check and a build.
+- The scheduled GitHub Actions pipelines have been paused since July 2026.
+- The rest of this README is in Japanese.
+
 ## Stack
 
 - Next.js 16 / React 19 / TypeScript strict
@@ -12,11 +23,15 @@
 
 ## Setup
 
-```bash
-pnpm install
-cp .env.example .env.local
-pnpm dev
-```
+前提：Node.js 24（CI と同じ）、pnpm 10（`package.json` の `packageManager`）、Supabase のプロジェクト。
+
+1. 依存関係を入れる: `pnpm install`
+2. Supabase のプロジェクトを作り、SQL Editor で `supabase/migrations/` の SQL を番号順（0001〜0006）に実行する。
+3. Supabase の Authentication 設定で Site URL を `http://localhost:3000` にし、Redirect URLs に `http://localhost:3000/auth/callback` を足す（メールのログインリンクが戻る先）。
+4. `cp .env.example .env.local` で設定ファイルを作り、`NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_ANON_KEY` を入れる。この2つが空のままだと、すべてのページが HTTP 500 になる。
+5. `pnpm dev` で起動し、http://localhost:3000 を開く。
+
+日次パイプライン（`scripts/`。取込 → マッチ → 提案 → 通知）を手元で動かすときは、`SUPABASE_SERVICE_ROLE_KEY` も設定する。`ANTHROPIC_API_KEY` と `RESEND_API_KEY` は任意で、未設定なら決定論のマッチングだけで動き、メールは送らずにログへ出す。
 
 `.env.local` は Git 管理外です。実鍵や個人のメールアドレスはコミットしないでください。
 
@@ -63,3 +78,5 @@ pnpm format:check
 pnpm audit --prod
 pnpm build
 ```
+
+CI（`.github/workflows/ci.yml`）では lint・typecheck・test・format:check・build を実行する。
