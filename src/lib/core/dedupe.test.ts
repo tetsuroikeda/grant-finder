@@ -65,9 +65,9 @@ describe("dedupeByScheduleKey", () => {
 
 describe("normalizeProgramName", () => {
   it("年度・回次・括弧・記号・空白を落とす", () => {
-    expect(normalizeProgramName("【令和8年度】省CO2型システムへの改修支援事業")).toBe(
-      normalizeProgramName("省CO2型システムへの改修支援事業"),
-    );
+    expect(
+      normalizeProgramName("【令和8年度】省CO2型システムへの改修支援事業"),
+    ).toBe(normalizeProgramName("省CO2型システムへの改修支援事業"));
     expect(normalizeProgramName("小規模事業者持続化補助金＜創業型＞")).toBe(
       "小規模事業者持続化補助金創業型",
     );
@@ -86,7 +86,10 @@ describe("isSameProgram", () => {
       ),
     ).toBe(true);
     expect(
-      isSameProgram("小規模事業者持続化補助金＜創業型＞", "小規模事業者持続化補助金"),
+      isSameProgram(
+        "小規模事業者持続化補助金＜創業型＞",
+        "小規模事業者持続化補助金",
+      ),
     ).toBe(true);
   });
 
@@ -103,7 +106,10 @@ describe("isSameProgram", () => {
 
 describe("overlapsAnyName", () => {
   it("候補のいずれかと同一制度なら true", () => {
-    const proposals = ["小規模事業者持続化補助金＜創業型＞", "ものづくり補助金"];
+    const proposals = [
+      "小規模事業者持続化補助金＜創業型＞",
+      "ものづくり補助金",
+    ];
     expect(overlapsAnyName("小規模事業者持続化補助金", proposals)).toBe(true);
     expect(overlapsAnyName("省CO2型システムへの改修支援事業", proposals)).toBe(
       false,
@@ -131,9 +137,21 @@ describe("dedupeByProgramFamily", () => {
   it("同一補助金の枠違いを締切が最も近い1件に集約", () => {
     const k = "中小企業生産性革命推進事業_事業承継・M&A補助金";
     const items = [
-      { id: "pmi1", scheduleKey: `${k}_PMI推進枠(事業統合投資類型)`, acceptanceEnd: "2026-07-24T00:00:00Z" },
-      { id: "pmi2", scheduleKey: `${k}_PMI推進枠(PMI専門家活用類型)`, acceptanceEnd: "2026-07-24T00:00:00Z" },
-      { id: "sokushin", scheduleKey: `${k}_事業承継促進枠`, acceptanceEnd: "2026-06-30T00:00:00Z" },
+      {
+        id: "pmi1",
+        scheduleKey: `${k}_PMI推進枠(事業統合投資類型)`,
+        acceptanceEnd: "2026-07-24T00:00:00Z",
+      },
+      {
+        id: "pmi2",
+        scheduleKey: `${k}_PMI推進枠(PMI専門家活用類型)`,
+        acceptanceEnd: "2026-07-24T00:00:00Z",
+      },
+      {
+        id: "sokushin",
+        scheduleKey: `${k}_事業承継促進枠`,
+        acceptanceEnd: "2026-06-30T00:00:00Z",
+      },
     ];
     const out = dedupeByProgramFamily(items);
     expect(out).toHaveLength(1);
@@ -141,8 +159,16 @@ describe("dedupeByProgramFamily", () => {
   });
   it("別補助金は別々に残る", () => {
     const items = [
-      { id: "a", scheduleKey: "国_持続化補助金_一般枠", acceptanceEnd: "2026-09-01T00:00:00Z" },
-      { id: "b", scheduleKey: "国_ものづくり補助金_通常枠", acceptanceEnd: "2026-09-01T00:00:00Z" },
+      {
+        id: "a",
+        scheduleKey: "国_持続化補助金_一般枠",
+        acceptanceEnd: "2026-09-01T00:00:00Z",
+      },
+      {
+        id: "b",
+        scheduleKey: "国_ものづくり補助金_通常枠",
+        acceptanceEnd: "2026-09-01T00:00:00Z",
+      },
     ];
     expect(dedupeByProgramFamily(items)).toHaveLength(2);
   });
