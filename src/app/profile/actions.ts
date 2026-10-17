@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { parseProfileForm, toBusinessRow } from "@/lib/validation";
 import { notifyDiscord } from "@/lib/notifications/discord";
+import { isRegistrationOpen } from "@/lib/registration";
 import { buildAppUrl } from "@/lib/url";
 import {
   fetchOpenSubsidiesForMatch,
@@ -57,6 +58,10 @@ export async function saveProfile(
     businessId = existing.id as string;
     leadStatus = (existing.lead_status as string | null) ?? "pending_review";
   } else {
+    // 新規登録の停止中は、事業者を新しく作らない（登録済みの更新はできる）。
+    if (!isRegistrationOpen()) {
+      return { error: "新規登録の受付は停止しています" };
+    }
     const { data: inserted, error } = await supabase
       .from("businesses")
       .insert(row)

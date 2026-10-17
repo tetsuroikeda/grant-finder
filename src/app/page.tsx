@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { isAdminEmail } from "@/lib/admin/access";
+import { isRegistrationOpen } from "@/lib/registration";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function Home() {
@@ -8,9 +9,19 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
   const isAdmin = isAdminEmail(user?.email);
+  const registrationOpen = isRegistrationOpen();
 
   return (
     <main className="mx-auto flex max-w-3xl flex-1 flex-col justify-center px-6 py-16">
+      {!registrationOpen && (
+        <p
+          role="status"
+          className="mb-8 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900"
+        >
+          現在、新規登録の受付を停止しています（通知メールの配信も止めています）。
+          登録済みの方は、ログインして登録内容を確認できます。
+        </p>
+      )}
       <h1 className="text-3xl font-bold leading-tight sm:text-4xl">
         あなたの事業に合う補助金を、
         <br />
@@ -31,13 +42,22 @@ export default async function Home() {
           >
             リード管理
           </Link>
-        ) : (
+        ) : user ? (
           <Link
-            href={user ? "/dashboard" : "/login"}
+            href="/dashboard"
             className="rounded-md bg-black px-6 py-3 text-white"
           >
-            {user ? "提案を見る" : "無料ではじめる"}
+            提案を見る
           </Link>
+        ) : (
+          registrationOpen && (
+            <Link
+              href="/login"
+              className="rounded-md bg-black px-6 py-3 text-white"
+            >
+              無料ではじめる
+            </Link>
+          )
         )}
         {!user && (
           <Link
