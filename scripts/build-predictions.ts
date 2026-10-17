@@ -101,7 +101,11 @@ async function main(): Promise<void> {
     // 予算動向シグナルがあれば反映（信頼度を上げ根拠に明記）。
     const sig = sigByKey.get(key);
     if (sig) withSignal++;
-    const p = applyBudgetSignal(base, sig?.kind ?? null, sig?.detectedAt ?? null);
+    const p = applyBudgetSignal(
+      base,
+      sig?.kind ?? null,
+      sig?.detectedAt ?? null,
+    );
     rows.push({
       schedule_key: key,
       name: g.name,

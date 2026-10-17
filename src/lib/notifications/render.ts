@@ -291,12 +291,12 @@ export function renderBatchedEmail(
   );
   const newAlerts = input.alerts.filter((a) => a.type === "new_match");
   const preAlerts = input.alerts.filter((a) => a.type === "pre_announce");
-  const alertCount = deadlineAlerts.length + newAlerts.length + preAlerts.length;
+  const alertCount =
+    deadlineAlerts.length + newAlerts.length + preAlerts.length;
   if (!hasProposal && alertCount === 0) return null;
 
   const appBaseUrl = safeHttpUrl(input.appBaseUrl);
-  const total =
-    alertCount + (hasProposal ? input.proposal!.items.length : 0);
+  const total = alertCount + (hasProposal ? input.proposal!.items.length : 0);
   const subject = `【補助金】お知らせ${total}件（${[
     hasProposal ? "提案" : null,
     deadlineAlerts.length ? "締切" : null,

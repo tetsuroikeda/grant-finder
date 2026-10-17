@@ -1,10 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildAppUrl, safeHttpUrl } from "../url";
 import { createEmailSender } from "./mailer";
-import {
-  renderProposalDigestEmail,
-  type ProposalEmailItem,
-} from "./render";
+import { renderProposalDigestEmail, type ProposalEmailItem } from "./render";
 
 export interface DigestSendResult {
   ok: boolean;
@@ -49,7 +46,8 @@ export async function sendProposalDigestNow(
   const items = ((proposal?.items as ProposalEmailItem[] | null) ?? []).filter(
     Boolean,
   );
-  if (items.length === 0) return { ok: false, skipped: true, reason: "提案なし" };
+  if (items.length === 0)
+    return { ok: false, skipped: true, reason: "提案なし" };
 
   // 実送信時はメール内リンクのため APP_BASE_URL 必須。未設定なら送らない。
   if (process.env.RESEND_API_KEY && !safeHttpUrl(process.env.APP_BASE_URL)) {

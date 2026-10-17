@@ -387,8 +387,7 @@ async function sendDue(
       if (n.type === "proposal_digest") {
         const p = await fetchProposal(supabase, n.business_id);
         const items = (p?.items ?? []).filter(Boolean);
-        if (items.length > 0)
-          proposal = { summary: p?.summary ?? "", items };
+        if (items.length > 0) proposal = { summary: p?.summary ?? "", items };
         continue;
       }
       const mk = n.matches;
@@ -419,7 +418,14 @@ async function sendDue(
         }
       }
       if (title)
-        alerts.push({ type: n.type, title, url, acceptanceEnd, predictedStart, reasons });
+        alerts.push({
+          type: n.type,
+          title,
+          url,
+          acceptanceEnd,
+          predictedStart,
+          reasons,
+        });
     }
 
     const email = renderBatchedEmail({

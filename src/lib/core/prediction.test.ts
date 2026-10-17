@@ -61,7 +61,11 @@ describe("applyBudgetSignal", () => {
   });
 
   it("予算シグナルで信頼度が上がり根拠に明記される", () => {
-    const out = applyBudgetSignal(base, "tousho", new Date("2026-04-10T00:00:00Z"));
+    const out = applyBudgetSignal(
+      base,
+      "tousho",
+      new Date("2026-04-10T00:00:00Z"),
+    );
     expect(out.confidence).toBeGreaterThan(base.confidence);
     expect(out.basis).toContain("当初予算成立");
     expect(out.basis).toContain("2026/4");

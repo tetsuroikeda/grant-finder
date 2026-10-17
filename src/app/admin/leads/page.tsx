@@ -41,10 +41,7 @@ interface ProposalItem {
 }
 
 /** 提案の締切表示。日付なら残り日数も付ける（自由記述はそのまま）。 */
-function deadlineLabel(
-  deadline: string | null | undefined,
-  now: Date,
-): string {
+function deadlineLabel(deadline: string | null | undefined, now: Date): string {
   const raw = deadline?.trim();
   if (!raw) return "";
   const d = new Date(raw);
